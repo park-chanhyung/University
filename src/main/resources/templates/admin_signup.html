@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>관리자 회원가입</title>
+</head>
+<body>
+<h2>관리자 회원가입</h2>
+<form th:action="@{/admin/signup}" th:object="${adminCreateForm}" method="post">
+    <div>
+        <label for="username">사용자명:</label>
+        <input type="text" th:field="*{username}" />
+        <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}">사용자ID 오류</p>
+    </div>
+    <div>
+        <label for="password1">비밀번호:</label>
+        <input type="password" th:field="*{password1}" />
+        <p th:if="${#fields.hasErrors('password1')}" th:errors="*{password1}">비밀번호 오류</p>
+    </div>
+    <div>
+        <label for="password2">비밀번호 확인:</label>
+        <input type="password" th:field="*{password2}" />
+        <p th:if="${#fields.hasErrors('password2')}" th:errors="*{password2}">비밀번호 확인 오류</p>
+    </div>
+    <button type="submit">가입</button>
+</form>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>찬형대학교 로그인 페이지</title>
+</head>
+<body>
+    <h1>로그인 페이지</h1>
+    <form th:action="@{/login}" method="post">
+        <input type="text" id="username" name="username" required>
+        <input type="password" id="password" name="password" required>
+        <button type="submit">로그인</button>
+    </form>
+<a th:href="@{/admin/adminCheck}"> 관리자페이지 </a>
+</body>
+</html>

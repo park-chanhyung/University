@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>관리자 비밀번호 확인</title>
+</head>
+<body>
+<h2>관리자 비밀번호 확인</h2>
+<form th:action="@{/admin/check-password}" method="post">
+    <input type="password" name="adminPassword" placeholder="관리자 비밀번호" required>
+    <button type="submit">확인</button>
+</form>
+<p th:if="${param.error}" style="color: red;">잘못된 비밀번호입니다.</p>
+</body>
+</html>
