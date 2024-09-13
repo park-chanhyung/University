@@ -1,17 +1,63 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>찬형대학교 - 과목 목록</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .subject-actions {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-메인페이지
+<h1>찬형대학교 메인 페이지</h1>
+
 <div sec:authorize="isAuthenticated()">
     <a th:href="@{/logout}">로그아웃</a>
 </div>
 
 <div sec:authorize="hasRole('ROLE_ADMIN')">
     <a th:href="@{/admin}">관리자 페이지</a>
+</div>
+
+<h2>과목 목록</h2>
+<table>
+    <thead>
+    <tr>
+        <th>과목명</th>
+        <th>수업개요</th>
+        <th>수업 장소</th>
+        <th>수업 시간</th>
+        <th>학점</th>
+        <th>교과목 번호</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="subject : ${subjects}">
+        <td th:text="${subject.subjectName}"></td>
+        <td th:text="${subject.classOverview}"></td>
+        <td th:text="${subject.classLocation}"></td>
+        <td th:text="${subject.classTime}"></td>
+        <td th:text="${subject.credits}"></td>
+        <td th:text="${subject.classNumber}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="subject-actions" sec:authorize="hasRole('ROLE_ADMIN')">
+    <a th:href="@{/subject/create}">새 과목 추가</a>
 </div>
 </body>
 </html>

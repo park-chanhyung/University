@@ -1,7 +1,9 @@
 package com.example.chanhyunguniversity.controller;
 
 import com.example.chanhyunguniversity.form.AdminCreateForm;
+import com.example.chanhyunguniversity.form.SubjectForm;
 import com.example.chanhyunguniversity.service.AdminService;
+import com.example.chanhyunguniversity.service.SubjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class AdminController {
     private final AdminService adminService;
+    private final SubjectService subjectService;
     @Value("${admin.password}")
     private String adminPassword;
 
