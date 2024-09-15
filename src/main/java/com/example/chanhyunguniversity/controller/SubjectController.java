@@ -10,11 +10,14 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.security.Principal;
 
 @Controller
 @RequestMapping("/subject")
 @RequiredArgsConstructor
-public class StudentController {
+public class SubjectController {
 
 
     private final SubjectService subjectService;
@@ -29,8 +32,26 @@ public class StudentController {
         if(bindingResult.hasErrors()){
             return "subject_create";
         }
-        subjectService.subjectCreate(subjectForm.getSubjectName(),subjectForm.getClassOverview(),
-                subjectForm.getClassLocation(),subjectForm.getClassTime(),subjectForm.getClassNumber() ,subjectForm.getCredits());
+        subjectService.subjectCreate(
+                subjectForm.getSubjectName(),
+                subjectForm.getClassOverview(),
+                subjectForm.getClassLocation(),
+                subjectForm.getClassTime(),
+                subjectForm.getClassNumber(),
+                subjectForm.getCredits(),
+                subjectForm.getClassification(),
+                subjectForm.getTotalCapacity(),
+                subjectForm.getSubjectGrade(),
+                subjectForm.getProfessorName(),
+                subjectForm.getDepartment()
+        );
+        return "redirect:/main";
+    }
+
+    @PostMapping("/register")
+    public String registerSubject(@RequestParam("subjectId") Long subjectId, Principal principal) {
+        String username = principal.getName();
+        subjectService.registerSubject(subjectId, username);
         return "redirect:/main";
     }
 }

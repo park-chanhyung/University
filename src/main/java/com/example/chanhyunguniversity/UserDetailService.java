@@ -36,7 +36,7 @@ public class UserDetailService implements UserDetailsService {
         if ("admin".equals(username)) {
             authorities.add(new SimpleGrantedAuthority(UserRole.ADMIN.getValue()));
         } else {
-            authorities.add(new SimpleGrantedAuthority(UserRole.USER.getValue()));
+            authorities.add(new SimpleGrantedAuthority(UserRole.student.getValue()));
         }
         return new User(user.getUsername(), user.getPassword(), authorities);
     }

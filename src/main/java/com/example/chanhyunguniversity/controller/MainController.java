@@ -16,6 +16,10 @@ import java.util.List;
 public class MainController {
 
     private final SubjectService subjectService;
+    @GetMapping("/")
+    public String root() {
+        return "login";
+    }
     @GetMapping("/login")
     public String Login(){
         return "login";

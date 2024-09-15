@@ -1,63 +1,72 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>찬형대학교 - 과목 목록</title>
+    <title>찬형대학교 수강신청 메인 페이지</title>
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .subject-actions {
-            margin-top: 20px;
-        }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .action-buttons a { margin-left: 10px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .register-btn { padding: 5px 10px; }
     </style>
 </head>
 <body>
-<h1>찬형대학교 메인 페이지</h1>
-
-<div sec:authorize="isAuthenticated()">
-    <a th:href="@{/logout}">로그아웃</a>
+<div class="header">
+    <h1>찬형대학교 수강신청 메인 페이지</h1>
+    <div class="action-buttons">
+        <a th:href="@{/}" th:text="홈"></a>
+        <a sec:authorize="isAuthenticated()" th:href="@{/logout}" th:text="로그아웃"></a>
+        <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/admin}" th:text="관리자페이지"></a>
+    </div>
 </div>
 
-<div sec:authorize="hasRole('ROLE_ADMIN')">
-    <a th:href="@{/admin}">관리자 페이지</a>
-</div>
+<h2>수강 가능 과목 목록</h2>
 
-<h2>과목 목록</h2>
 <table>
     <thead>
     <tr>
         <th>과목명</th>
-        <th>수업개요</th>
-        <th>수업 장소</th>
-        <th>수업 시간</th>
+        <th>담당 교수</th>
         <th>학점</th>
-        <th>교과목 번호</th>
+        <th>수업 시간</th>
+        <th>강의실</th>
+        <th>수강 인원</th>
+        <th>남은 자리</th>
+        <th sec:authorize="hasRole('ROLE_STUDENT')">수강신청</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="subject : ${subjects}">
         <td th:text="${subject.subjectName}"></td>
-        <td th:text="${subject.classOverview}"></td>
-        <td th:text="${subject.classLocation}"></td>
-        <td th:text="${subject.classTime}"></td>
+        <td th:text="${subject.professor != null ? subject.professor.professorName : '미정'}"></td>
         <td th:text="${subject.credits}"></td>
-        <td th:text="${subject.classNumber}"></td>
+        <td th:text="${subject.classTime}"></td>
+        <td th:text="${subject.classLocation}"></td>
+        <td th:text="${subject.totalCapacity}"></td>
+        <td th:text="${subject.remainCapacity}"></td>
+        <td sec:authorize="hasRole('ROLE_student')">
+            <form th:action="@{/subject/register}" method="post">
+                <input type="hidden" name="subjectId" th:value="${subject.id}" />
+                <button class="register-btn" type="submit"
+                        th:disabled="${subject.remainCapacity <= 0}"
+                        th:text="${subject.remainCapacity <= 0 ? '마감' : '신청'}">
+                </button>
+            </form>
+        </td>
     </tr>
     </tbody>
 </table>
 
-<div class="subject-actions" sec:authorize="hasRole('ROLE_ADMIN')">
-    <a th:href="@{/subject/create}">새 과목 추가</a>
+<div sec:authorize="hasRole('ROLE_ADMIN')" style="margin-top: 20px;">
+    <a th:href="@{/subject/create}" th:text="새과목추가"></a>
+</div>
+
+<div sec:authorize="hasRole('ROLE_student')" style="margin-top: 20px;">
+    <h3>내 수강 신청 현황</h3>
+    <!-- 여기에 학생의 수강 신청 현황을 보여주는 테이블을 추가할 수 있습니다 -->
 </div>
 </body>
 </html>
