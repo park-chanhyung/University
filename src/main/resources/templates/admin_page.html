@@ -1,12 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
 관리자페이지
-강의 등록<a href="/subject/create">강의 등록</a>
+<table>
+    <thead>
+    <tr>
+        <th>과목명</th>
+        <th>분류</th>
+        <th>담당 교수</th>
+        <th>학점</th>
+        <th>수업 시간</th>
+        <th>강의실</th>
+        <th>수강 인원</th>
+        <th>남은 자리</th>
+        <th></th>
 
+        </th>
+        <th sec:authorize="hasRole('ROLE_ADMIN')">수정</th>
+        <th sec:authorize="hasRole('ROLE_ADMIN')">삭제</th>
+    </tr>
+<!--     <form th:action="@{/subject/register}" method="post">-->
+<!--        <input type="hidden" name="subjectId" th:value="${subject.id}" />-->
+<!--        <button class="register-btn" type="submit"-->
+<!--                th:disabled="${subject.remainCapacity <= 0}"-->
+<!--                th:text="${subject.remainCapacity <= 0 ? '마감' : '신청'}">-->
+<!--        </button>-->
+<!--    </form>-->
+    </thead>
+    <tbody>
+    <tr th:each="subject : ${subjects}">
+        <td th:text="${subject.subjectName}"></td>
+        <td th:text="${subject.classification}"></td>
+        <td th:text="${subject.professor != null ? subject.professor.professorName : '미정'}"></td>
+        <td th:text="${subject.credits}"></td>
+        <td th:text="${subject.classTime}"></td>
+        <td th:text="${subject.classLocation}"></td>
+        <td th:text="${subject.totalCapacity}"></td>
+        <td th:text="${subject.remainCapacity}"></td>
+        <th sec:authorize="hasRole('ROLE_ADMIN')">
+            <form th:action="@{|/subject/update/${subject.id}|}" method="post">
+                <input type="hidden" name="subjectId" th:value="${subject.id}" />
+                <button class="register-btn" type="submit" th:value="수정하기">수정하기
+                </button>
+            </form>ㄴ
+            <form th:action="@{|/subject/delete/${subject.id}|}">
+                <input type="hidden" name="subjectId" th:value="${subject.id}" />
+                <button class="register-btn" type="submit" th:value="삭제하기">삭제하기
+                </button>
+            </form>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>

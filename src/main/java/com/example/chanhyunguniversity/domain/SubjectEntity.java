@@ -36,7 +36,7 @@ public class SubjectEntity {
     @Column
     private String credits; // 학점
 
-    @Column(unique = true)
+    @Column
     private String classNumber; // 교과목 번호
 
     @Column

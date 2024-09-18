@@ -1,5 +1,6 @@
 package com.example.chanhyunguniversity.controller;
 
+import com.example.chanhyunguniversity.domain.SubjectEntity;
 import com.example.chanhyunguniversity.form.AdminCreateForm;
 import com.example.chanhyunguniversity.form.SubjectForm;
 import com.example.chanhyunguniversity.service.AdminService;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/admin")
 @RequiredArgsConstructor
@@ -26,7 +29,9 @@ public class AdminController {
     private String adminPassword;
 
     @GetMapping
-    public String adminPage(){
+    public String adminPage(Model model){
+        List<SubjectEntity> subjects = subjectService.getAllSubjects();
+        model.addAttribute("subjects", subjects);
         return "admin_page";
     }
     @GetMapping("/adminCheck")

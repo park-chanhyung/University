@@ -19,13 +19,15 @@ public class CourseRegistrationEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
+    @JoinColumn(name = "student_id")
     private UserEntity student;
 
     @ManyToOne
-    @JoinColumn(name = "subject_id", nullable = false)
+    @JoinColumn(name = "subject_id")
     private SubjectEntity subject;
+
 
     @Column(nullable = false)
     private LocalDateTime registrationDate;

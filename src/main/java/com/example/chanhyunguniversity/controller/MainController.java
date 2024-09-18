@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.security.auth.Subject;
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -25,7 +26,11 @@ public class MainController {
         return "login";
     }
     @GetMapping("/main")
-    public String mainPage(Model model) {
+    public String mainPage(Model model, Principal principal) {
+
+        String username = principal.getName();
+        List<SubjectEntity> registeredSubjects = subjectService.getRegisteredSubjects(username);
+        model.addAttribute("registeredSubjects", registeredSubjects);
         List<SubjectEntity> subjects = subjectService.getAllSubjects();
         model.addAttribute("subjects", subjects);
         return "main";  // 이 HTML 파일의 이름을 "main.html"로 저장해야 합니다.

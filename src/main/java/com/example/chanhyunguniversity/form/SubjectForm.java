@@ -1,5 +1,6 @@
 package com.example.chanhyunguniversity.form;
 
+import com.example.chanhyunguniversity.domain.ProfessorEntity;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -42,4 +43,12 @@ public class SubjectForm {
 
 
     private String department;
+
+    public String getProfessorName() {
+        return professorName;
+    }
+
+
+    public void setProfessor(ProfessorEntity professor) {
+    }
 }
