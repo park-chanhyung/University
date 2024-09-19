@@ -7,13 +7,17 @@ import com.example.chanhyunguniversity.repository.ProfessorRepository;
 import com.example.chanhyunguniversity.service.SubjectService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.service.annotation.PostExchange;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/subject")
@@ -116,12 +120,16 @@ public class SubjectController {
 
     //수강신청
     @PostMapping("/register")
-    public String registerSubject(@RequestParam("subjectId") Long subjectId, Principal principal) {
-        String username = principal.getName();
-
-        subjectService.registerSubject(subjectId, username);
-        return "redirect:/main";
+    public String registerSubject(@RequestParam("subjectId") Long subjectId, Principal principal, RedirectAttributes redirectAttributes) {
+        try {
+            subjectService.registerSubject(subjectId, principal.getName());
+            redirectAttributes.addFlashAttribute("message", "수강 신청이 완료되었습니다.");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
+        }
+        return "redirect:/main";  // 메인 페이지로 리다이렉트
     }
+
     //수강취소
     @PostMapping("/cancel")
     public String cancelSubjectRegistration(@RequestParam("subjectId") Long subjectId, Principal principal) {

@@ -14,5 +14,7 @@ public interface CourseRegistrationRepository extends JpaRepository<CourseRegist
 
 
     List<CourseRegistrationEntity> findBySubjectIdAndStudentUsername(Long subjectId, String username);
+
+    boolean existsByStudentAndSubject(UserEntity student, SubjectEntity subject);
 }
 

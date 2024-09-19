@@ -47,7 +47,24 @@ public class UserEntity {
     @Column
     private LocalDateTime createdAt;
 
+    @Column
+    private int ableCredits;
+
+    @Column
+    private int totalCredits = 0; // 신청 학점
 
     @OneToMany(mappedBy = "student")
     private List<CourseRegistrationEntity> registrations;
+
+
+    public void addCredits(int credits) throws IllegalStateException{
+        if (totalCredits + credits > ableCredits){
+            throw new IllegalStateException("신청 가능한 학점을 초과했습니다. ");
+        }
+        this.totalCredits += credits;
+    }
+    public void removeCredits(int credits){
+        this.totalCredits = Math.max(0,this.totalCredits - credits);
+    }
 }
+

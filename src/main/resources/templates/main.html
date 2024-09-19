@@ -69,6 +69,8 @@
 
 <div sec:authorize="hasRole('ROLE_student')" style="margin-top: 20px;">
     <h3>내 수강 신청 현황</h3>
+
+    내 신청학점 <span th:text="${totalCredits}"></span> / <span th:text="${ableCredits}"></span>
     <table>
         <thead>
         <tr>
@@ -91,13 +93,22 @@
         <td th:text="${registeredSubjects.classLocation}"></td>
         <td sec:authorize="hasRole('ROLE_student')">
             <form th:action="@{/subject/cancel}" method="post" >
-                <input type="hidden" name="subjectId" th:value="${registeredSubjects.id}"/>
+                <input type="hidden" name="subjectId" th:value="${registeredSubjects.id}  "/>
                 <button type="submit" onclick="return confirm('정말로 수강을 취소하시겠습니까?');">수강 취소</button>
             </form>
         </td>
     </tr>
         </tbody>
     </table>
+
 </div>
 </body>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var message = /*[[${message}]]*/ null;
+    if (message) {
+        alert(message);
+    }
+    /*]]>*/
+</script>
 </html>

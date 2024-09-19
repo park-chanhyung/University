@@ -78,16 +78,21 @@ public class SubjectService {
         UserEntity student = userRepository.findByusername(username)
                 .orElseThrow(() -> new RuntimeException("student not found"));
 
+        boolean alreadyRegistered = courseRegistrationRepository.existsByStudentAndSubject(student,subject);
+        if(alreadyRegistered){
+            throw new RuntimeException("이미 신청한 과목입니다.");
+
+        }
+
         if (subject.getRemainCapacity() <= 0) {
             throw new RuntimeException("정원초과된 과목입니다.");
         }
-
         CourseRegistrationEntity registration = new CourseRegistrationEntity();
         registration.setStudent(student);
         registration.setSubject(subject);
         registration.setRegistrationDate(LocalDateTime.now());
         registration.setStatus("REGISTERED");
-
+        student.addCredits(Integer.parseInt(subject.getCredits()));
         this.courseRegistrationRepository.save(registration);
 
         subject.setRemainCapacity(subject.getRemainCapacity() - 1);
@@ -101,7 +106,6 @@ public class SubjectService {
     public List<SubjectEntity> getRegisteredSubjects(String username) {
         UserEntity student = userRepository.findByusername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
         List<CourseRegistrationEntity> registrations =
                 courseRegistrationRepository.findByStudent(student);
 
@@ -111,6 +115,11 @@ public class SubjectService {
     }
 
     public void cancelSubjectRegistration(Long subjectId, String username) {
+
+        UserEntity student = userRepository.findByusername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+//        SubjectEntity subjectCredit = subjectRepository.findById(subjectId).orElseThrow(()-> new RuntimeException("subject not found"));
         List<CourseRegistrationEntity> registrations = courseRegistrationRepository
                 .findBySubjectIdAndStudentUsername(subjectId, username);
 
@@ -121,8 +130,8 @@ public class SubjectService {
         // 모든 중복 등록을 취소
         for (CourseRegistrationEntity registration : registrations) {
             courseRegistrationRepository.delete(registration);
-
-            SubjectEntity subject = registration.getSubject();
+           SubjectEntity subject = registration.getSubject();
+           student.removeCredits(Integer.parseInt(subject.getCredits()));
             subject.setRemainCapacity(subject.getRemainCapacity() + 1);
             subjectRepository.save(subject);
         }
