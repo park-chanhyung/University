@@ -8,13 +8,18 @@ import com.example.chanhyunguniversity.repository.CourseRegistrationRepository;
 import com.example.chanhyunguniversity.repository.ProfessorRepository;
 import com.example.chanhyunguniversity.repository.SubjectRepository;
 import com.example.chanhyunguniversity.repository.UserRepository;
+import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,7 +45,7 @@ public class SubjectService {
         subject.setCredits(credits);
         subject.setClassification(classification);
         subject.setTotalCapacity(totalCapacity);
-        subject.setRemainCapacity(totalCapacity); // 초기에는 남은 자리가 전체 수강 정원과 같습니다.
+        subject.setRemainCapacity(totalCapacity);
         subject.setSubjectGrade(subjectGrade);
         subject.setProfessor(professor);
         subject.setDepartment(department);
@@ -145,4 +150,85 @@ public class SubjectService {
             throw new RuntimeException("Subject not found");
         }
     }
+
+    private Specification<SubjectEntity> search(String kw) {
+        return (root, query, cb) -> {
+            query.distinct(true);
+            String likeKeyword = "%" + kw + "%";
+
+            Join<SubjectEntity, ProfessorEntity> professorJoin = root.join("professor", JoinType.LEFT);
+
+            return cb.or(
+                    cb.like(root.get("subjectName"), likeKeyword),
+                    cb.like(root.get("department"), likeKeyword),
+                    cb.like(root.get("subjectGrade"), likeKeyword),
+                    cb.like(professorJoin.get("professorName"), likeKeyword)
+            );
+        };
+    }
+    public Page<SubjectEntity> getList(int page, String kw, String grade, String department, String classification) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("classification").nullsLast());
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+        Specification<SubjectEntity> spec = search(kw, grade, department, classification);
+        return this.subjectRepository.findAll(spec, pageable);
+    }
+
+    private Specification<SubjectEntity> search(String kw, String grade, String department, String classification) {
+        return (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (kw != null && !kw.isEmpty()) {
+                String likeKeyword = "%" + kw + "%";
+                Join<SubjectEntity, ProfessorEntity> professorJoin = root.join("professor", JoinType.LEFT);
+                predicates.add(cb.or(
+                        cb.like(root.get("subjectName"), likeKeyword),
+                        cb.like(root.get("department"), likeKeyword),
+                        cb.like(root.get("subjectGrade"), likeKeyword),
+                        cb.like(professorJoin.get("professorName"), likeKeyword)
+                ));
+            }
+
+
+            if (grade != null && !grade.isEmpty()) {
+                predicates.add(cb.equal(root.get("subjectGrade"), grade));
+            }
+
+            if (department != null && !department.isEmpty()) {
+                predicates.add(cb.equal(root.get("department"), department));
+            }
+
+            if (classification != null && !classification.isEmpty()) {
+                predicates.add(cb.equal(root.get("classification"), classification));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+
+    public List<String> getAllDepartments() {
+        return subjectRepository.findAll().stream()
+                .map(SubjectEntity::getDepartment)
+                .filter(Objects::nonNull)
+                .distinct()
+                .sorted(Comparator.nullsLast(Comparator.naturalOrder()))
+                .collect(Collectors.toList());
+    }
+
+    public List<String> getAllClassifications() {
+        return subjectRepository.findAll().stream()
+                .map(SubjectEntity::getClassification)
+                .filter(Objects::nonNull)
+                .distinct()
+                .sorted(Comparator.nullsLast(Comparator.naturalOrder()))
+                .collect(Collectors.toList());
+    }
+
+    public SubjectEntity searchClassNumber(String classNumber){
+        return subjectRepository.findByClassNumber(classNumber).orElseThrow(()-> new RuntimeException("찾을수없는 과목코드입니다."));
+    }
 }
+///public SubjectEntity findByClassNumber(String classNumber) {
+//        return subjectRepository.findByClassNumber(classNumber)
+//        .orElseThrow(() -> new RuntimeException("Subject with class number " + classNumber + " not found"));
+////        }

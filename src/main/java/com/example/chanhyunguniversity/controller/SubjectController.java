@@ -16,8 +16,7 @@ import org.springframework.web.service.annotation.PostExchange;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
+
 
 @Controller
 @RequestMapping("/subject")
@@ -138,3 +137,4 @@ public class SubjectController {
         return "redirect:/main";  // 또는 적절한 페이지로 리다이렉트
     }
 }
+

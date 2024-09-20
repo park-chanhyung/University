@@ -4,13 +4,30 @@
     <meta charset="UTF-8">
     <title>찬형대학교 수강신청 메인 페이지</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .action-buttons a { margin-left: 10px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .register-btn { padding: 5px 10px; }
+        .header, .search-form, .subject-table, .pagination {
+            margin-bottom: 20px;
+        }
+        .action-buttons a {
+            margin-right: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            padding: 0;
+        }
+        .pagination li {
+            margin: 0 5px;
+        }
     </style>
 </head>
 <body>
@@ -25,7 +42,41 @@
 
 <h2>수강 가능 과목 목록</h2>
 
-<table>
+    <div class="search-form">
+    <form th:action="@{/main}" method="get">
+        <select name="grade">
+            <option value="">전체 학년</option>
+            <option value="1" th:selected="${param.grade == '1'}">1학년</option>
+            <option value="2" th:selected="${param.grade == '2'}">2학년</option>
+            <option value="3" th:selected="${param.grade == '3'}">3학년</option>
+            <option value="4" th:selected="${param.grade == '4'}">4학년</option>
+        </select>
+        <select name="department">
+            <option value="">전체 학과</option>
+            <option th:each="dept : ${departments}"
+                    th:value="${dept}"
+                    th:text="${dept}"
+                    th:selected="${param.department == dept}"></option>
+        </select>
+        <select name="classification">
+            <option value="">전체 분류</option>
+            <option th:each="class : ${classifications}"
+                    th:value="${class}"
+                    th:text="${class}"
+                    th:selected="${param.classification == class}"></option>
+        </select>
+        <input type="text" name="kw" th:value="${param.kw}" placeholder="검색어 입력">
+        <button type="submit">검색</button>
+    </form>
+
+    <form th:action="@{/search}" method="get">
+        <input type="text" name="classNumber" placeholder="교과목 번호 입력">
+        <button type="submit">교과목 번호로 검색</button>
+    </form>
+
+</div>
+
+<table class="subject-table">
     <thead>
     <tr>
         <th>과목명</th>
@@ -36,12 +87,11 @@
         <th>강의실</th>
         <th>수강 인원</th>
         <th>남은 자리</th>
-        <th></th>
-        <th sec:authorize="hasRole('ROLE_STUDENT')">수강신청</th>
+        <th sec:authorize="hasRole('ROLE_student')">수강신청</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="subject : ${subjects}">
+    <tr th:each="subject : ${paging}">
         <td th:text="${subject.subjectName}"></td>
         <td th:text="${subject.classification}"></td>
         <td th:text="${subject.professor != null ? subject.professor.professorName : '미정'}"></td>
@@ -63,13 +113,32 @@
     </tbody>
 </table>
 
+<!-- Pagination -->
+<div th:if="${paging.totalPages > 1}" class="pagination">
+    <ul>
+        <li th:classappend="${!paging.hasPrevious} ? 'disabled'">
+            <a th:href="@{/main(page=${paging.number-1}, kw=${param.kw}, grade=${param.grade})}">
+                <span>이전</span>
+            </a>
+        </li>
+        <li th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
+            th:classappend="${page == paging.number} ? 'active'">
+            <a th:href="@{/main(page=${page}, kw=${param.kw}, grade=${param.grade})}" th:text="${page + 1}"></a>
+        </li>
+        <li th:classappend="${!paging.hasNext} ? 'disabled'">
+            <a th:href="@{/main(page=${paging.number+1}, kw=${param.kw}, grade=${param.grade})}">
+                <span>다음</span>
+            </a>
+        </li>
+    </ul>
+</div>
+
 <div sec:authorize="hasRole('ROLE_ADMIN')" style="margin-top: 20px;">
     <a th:href="@{/subject/create}" th:text="새과목추가"></a>
 </div>
 
 <div sec:authorize="hasRole('ROLE_student')" style="margin-top: 20px;">
     <h3>내 수강 신청 현황</h3>
-
     내 신청학점 <span th:text="${totalCredits}"></span> / <span th:text="${ableCredits}"></span>
     <table>
         <thead>
@@ -84,23 +153,22 @@
         </tr>
         </thead>
         <tbody>
-    <tr th:each="registeredSubjects : ${registeredSubjects}">
-        <td th:text="${registeredSubjects.subjectName}"></td>
-        <td th:text="${registeredSubjects.classification}"></td>
-        <td th:text="${registeredSubjects.professor != null ? registeredSubjects.professor.professorName : '미정'}"></td>
-        <td th:text="${registeredSubjects.credits}"></td>
-        <td th:text="${registeredSubjects.classTime}"></td>
-        <td th:text="${registeredSubjects.classLocation}"></td>
-        <td sec:authorize="hasRole('ROLE_student')">
-            <form th:action="@{/subject/cancel}" method="post" >
-                <input type="hidden" name="subjectId" th:value="${registeredSubjects.id}  "/>
-                <button type="submit" onclick="return confirm('정말로 수강을 취소하시겠습니까?');">수강 취소</button>
-            </form>
-        </td>
-    </tr>
+        <tr th:each="registeredSubjects : ${registeredSubjects}">
+            <td th:text="${registeredSubjects.subjectName}"></td>
+            <td th:text="${registeredSubjects.classification}"></td>
+            <td th:text="${registeredSubjects.professor != null ? registeredSubjects.professor.professorName : '미정'}"></td>
+            <td th:text="${registeredSubjects.credits}"></td>
+            <td th:text="${registeredSubjects.classTime}"></td>
+            <td th:text="${registeredSubjects.classLocation}"></td>
+            <td sec:authorize="hasRole('ROLE_student')">
+                <form th:action="@{/subject/cancel}" method="post" >
+                    <input type="hidden" name="subjectId" th:value="${registeredSubjects.id}  "/>
+                    <button type="submit" onclick="return confirm('정말로 수강을 취소하시겠습니까?');">수강 취소</button>
+                </form>
+            </td>
+        </tr>
         </tbody>
     </table>
-
 </div>
 </body>
 <script th:inline="javascript">

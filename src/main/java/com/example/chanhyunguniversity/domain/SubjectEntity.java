@@ -29,7 +29,8 @@ public class SubjectEntity {
     private String classLocation; // 수업 장소
 
     @Column
-    private String subjectGrade; // 교과목 번호
+    private String subjectGrade; // 학년
+
     @Column
     private String classTime; // 수업 시간
 
@@ -50,7 +51,8 @@ public class SubjectEntity {
 
     @Column
     private String department;  // 남은자리
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "professor_id", nullable = false)
     private ProfessorEntity professor;
 

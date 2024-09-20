@@ -46,7 +46,7 @@
                 <input type="hidden" name="subjectId" th:value="${subject.id}" />
                 <button class="register-btn" type="submit" th:value="수정하기">수정하기
                 </button>
-            </form>ㄴ
+            </form>
             <form th:action="@{|/subject/delete/${subject.id}|}">
                 <input type="hidden" name="subjectId" th:value="${subject.id}" />
                 <button class="register-btn" type="submit" th:value="삭제하기">삭제하기
