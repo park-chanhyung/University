@@ -44,6 +44,7 @@ public class SubjectForm {
 
     private String department;
 
+
     public String getProfessorName() {
         return professorName;
     }

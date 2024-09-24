@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{layout}">
+<head>
+    <title>공지사항</title>
+</head>
+<body>
+
+
+<div layout:fragment="content" class="container my-3">
+
+<h2>공지사항</h2>
+
+<div th:each="noticelist : ${list}">
+    <div class="notice-item" th:onclick="'toggleContent(' + ${noticelist.id} + ')'">
+        <span th:text="${noticelist.title}"></span>
+        <span th:text="${#temporals.format(noticelist.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+    </div>
+
+    <div class="notice-content" th:id="'content-' + ${noticelist.id}" style="display: none;">
+        <p th:text="${noticelist.content}"></p>
+    </div>
+
+    <a th:href="@{'/notice/update/' + ${noticelist.id}}">수정하기</a>
+
+    <form th:id="'deleteForm-' + ${noticelist.id}" th:action="@{'/notice/delete/' + ${noticelist.id}}" method="post" style="display: inline;">
+        <button type="button" th:onclick="'confirmDelete(' + ${noticelist.id} + ')'">삭제하기</button>
+    </form>
+</div>
+
+</body>
+<script>
+    function toggleContent(id) {
+        var content = document.getElementById('content-' + id);
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+        } else {
+            content.style.display = 'none';
+        }
+    }
+
+    function confirmDelete(id) {
+        if (confirm('정말로 이 공지를 삭제하시겠습니까?')) {
+            document.getElementById('deleteForm-' + id).submit();
+        }
+    }
+</script>
+</html>

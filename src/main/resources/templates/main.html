@@ -133,9 +133,7 @@
     </ul>
 </div>
 
-<div sec:authorize="hasRole('ROLE_ADMIN')" style="margin-top: 20px;">
-    <a th:href="@{/subject/create}" th:text="새과목추가"></a>
-</div>
+
 
 <div sec:authorize="hasRole('ROLE_student')" style="margin-top: 20px;">
     <h3>내 수강 신청 현황</h3>

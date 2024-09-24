@@ -1,21 +1,19 @@
 package com.example.chanhyunguniversity.controller;
 
+import com.example.chanhyunguniversity.domain.NoticeEntity;
 import com.example.chanhyunguniversity.domain.SubjectEntity;
 import com.example.chanhyunguniversity.domain.UserEntity;
+import com.example.chanhyunguniversity.service.NoticeService;
 import com.example.chanhyunguniversity.service.SubjectService;
 import com.example.chanhyunguniversity.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.security.auth.Subject;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -25,12 +23,16 @@ import java.util.Optional;
 public class MainController {
     private final UserService userService;
     private final SubjectService subjectService;
+    private final NoticeService noticeService;
     @GetMapping("/")
-    public String root() {
+    public String root(Model model) {
+       List<NoticeEntity> noticeEntityList = noticeService.getList();
+        model.addAttribute("noticeEntityList",noticeEntityList);
         return "login";
     }
     @GetMapping("/login")
-    public String Login(){
+    public String login() {
+
         return "login";
     }
 

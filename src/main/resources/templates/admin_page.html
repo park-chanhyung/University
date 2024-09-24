@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:layout="http://www.w3.org/1999/xhtml"
+      layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-관리자페이지
+
+<div layout:fragment="content" class="container my-3">
+
+
 <table>
     <thead>
     <tr>
@@ -23,13 +27,6 @@
         <th sec:authorize="hasRole('ROLE_ADMIN')">수정</th>
         <th sec:authorize="hasRole('ROLE_ADMIN')">삭제</th>
     </tr>
-<!--     <form th:action="@{/subject/register}" method="post">-->
-<!--        <input type="hidden" name="subjectId" th:value="${subject.id}" />-->
-<!--        <button class="register-btn" type="submit"-->
-<!--                th:disabled="${subject.remainCapacity <= 0}"-->
-<!--                th:text="${subject.remainCapacity <= 0 ? '마감' : '신청'}">-->
-<!--        </button>-->
-<!--    </form>-->
     </thead>
     <tbody>
     <tr th:each="subject : ${subjects}">
@@ -55,5 +52,6 @@
     </tr>
     </tbody>
 </table>
+</div>
 </body>
 </html>

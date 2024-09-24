@@ -3,14 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <title>찬형대학교 로그인 페이지</title>
+    <style>
+        .notice-item {
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .notice-item.fixed {
+            font-weight: bold;
+        }
+        .notice-content {
+            display: none;
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        .notice-date {
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+    <script>
+        function toggleContent(id) {
+            var content = document.getElementById('content-' + id);
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+            } else {
+                content.style.display = 'none';
+            }
+        }
+    </script>
 </head>
 <body>
-    <h1>로그인 페이지</h1>
-    <form th:action="@{/login}" method="post">
-        <input type="text" id="username" name="username" required>
-        <input type="password" id="password" name="password" required>
-        <button type="submit">로그인</button>
-    </form>
-<a th:href="@{/admin/adminCheck}"> 관리자페이지 </a>
+<h1>로그인 페이지</h1>
+<form th:action="@{/login}" method="post">
+    <input type="text" id="username" name="username" required>
+    <input type="password" id="password" name="password" required>
+    <button type="submit">로그인</button>
+</form>
+<!--<a th:href="@{/admin/adminCheck}"> 관리자페이지 </a>-->
+
+<h2>공지사항</h2>
+
+<div th:each="notice : ${noticeEntityList}">
+    <div class="notice-item" th:classappend="${notice.fixNotice} ? 'fixed' : ''"
+         th:onclick="'toggleContent(' + ${notice.id} + ')'">
+        <span th:text="${notice.title}"></span>
+        <span class="notice-date" th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+    </div>
+    <div class="notice-content" th:id="'content-' + ${notice.id}" th:text="${notice.content}">
+    </div>
+</div>
+
+<script>
+    function toggleContent(id) {
+        var content = document.getElementById('content-' + id);
+        if (content.style.display === 'none' || content.style.display === '') {
+            content.style.display = 'block';
+        } else {
+            content.style.display = 'none';
+        }
+    }
+</script>
 </body>
 </html>
