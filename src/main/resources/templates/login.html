@@ -1,67 +1,170 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>찬형대학교 로그인 페이지</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>찬형대학교 수강신청</title>
     <style>
-        .notice-item {
-            cursor: pointer;
-            margin-bottom: 10px;
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-repeat: no-repeat;
+            background-color: #0a192f;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .notice-item.fixed {
+        .container {
+            display: flex;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            width: 1000px;
+        }
+        .notice-section {
+            /*margin-bottom: 20px;*/
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            font-size: 18px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .notice-title {
+            font-size: 30px;
             font-weight: bold;
+            padding-top: 50px;
+            margin-bottom: 40px;
+            color: #333;
         }
         .notice-content {
-            display: none;
+            margin-top: 10px;
             margin-left: 20px;
-            margin-bottom: 15px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.6;
+            color: #444;
         }
         .notice-date {
             font-size: 0.9em;
-            color: #666;
+            color: #777;
+            margin-top: 10px;
+        }
+        .login-section {
+            flex: 1;
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo img {
+            width: 180px;
+        }
+        h1 {
+            text-align: center;
+            color: #0a192f;
+            font-size: 28px;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+        .input-group {
+            margin-bottom: 25px;
+            margin-right: 25px
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #0a192f;
+            font-weight: 500;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        .input-group input:focus {
+            border-color: #d4af37;
+            outline: none;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #d4af37;
+            color: #0a192f;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 700;
+            transition: background-color 0.3s ease;
+        }
+        .submit-btn:hover {
+            background-color: #c19b2e;
+        }
+        .language-switch {
+            text-align: right;
+            margin-top: 20px;
+        }
+        .language-switch a {
+            color: #d4af37;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        .language-switch a:hover {
+            color: #c19b2e;
+        }
+        .notice-section h2 {
+            color: #0a192f;
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        .notice-content {
+            color: #172a45;
+            line-height: 1.6;
         }
     </style>
-    <script>
-        function toggleContent(id) {
-            var content = document.getElementById('content-' + id);
-            if (content.style.display === 'none') {
-                content.style.display = 'block';
-            } else {
-                content.style.display = 'none';
-            }
-        }
-    </script>
 </head>
 <body>
-<h1>로그인 페이지</h1>
-<form th:action="@{/login}" method="post">
-    <input type="text" id="username" name="username" required>
-    <input type="password" id="password" name="password" required>
-    <button type="submit">로그인</button>
-</form>
-<!--<a th:href="@{/admin/adminCheck}"> 관리자페이지 </a>-->
+<div class="container">
+    <div th:if="${fixedNotice}" class="notice-section">
+        <div class="notice-title" th:text="${fixedNotice.title}">공지사항 제목</div>
+        <div class="notice-content" th:text="${fixedNotice.content}">
+            <!-- 공지사항 내용이 여기에 표시됩니다 -->
+        </div>
+<!--        <div class="notice-date" th:text="${#temporals.format(fixedNotice.createdAt, 'yyyy년 MM월 dd일 HH:mm')}">작성일</div>-->
 
-<h2>공지사항</h2>
-
-<div th:each="notice : ${noticeEntityList}">
-    <div class="notice-item" th:classappend="${notice.fixNotice} ? 'fixed' : ''"
-         th:onclick="'toggleContent(' + ${notice.id} + ')'">
-        <span th:text="${notice.title}"></span>
-        <span class="notice-date" th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
     </div>
-    <div class="notice-content" th:id="'content-' + ${notice.id}" th:text="${notice.content}">
+    <div class="login-section">
+        <div class="logo">
+            <img th:src="@{/images/logo.png}" alt="Logo" class="logo">
+        </div>
+        <form th:action="@{/login}" method="post">
+        <div class="input-group">
+                <label for="username">학번 (Student ID)</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">비밀번호 (Password)</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="submit-btn">로그인</button>
+        </form>
+        <div class="language-switch">
+            <a href="#">ENGLISH VERSION ›</a>
+        </div>
     </div>
 </div>
-
-<script>
-    function toggleContent(id) {
-        var content = document.getElementById('content-' + id);
-        if (content.style.display === 'none' || content.style.display === '') {
-            content.style.display = 'block';
-        } else {
-            content.style.display = 'none';
-        }
-    }
-</script>
 </body>
 </html>

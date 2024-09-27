@@ -26,8 +26,10 @@ public class MainController {
     private final NoticeService noticeService;
     @GetMapping("/")
     public String root(Model model) {
-       List<NoticeEntity> noticeEntityList = noticeService.getList();
-        model.addAttribute("noticeEntityList",noticeEntityList);
+        Optional<NoticeEntity> latestFixedNotice = noticeService.getLatestFixedNotice();
+        latestFixedNotice.ifPresent(notice ->{
+            model.addAttribute("fixedNotice", notice);
+        });
         return "login";
     }
     @GetMapping("/login")

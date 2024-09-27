@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Sidebar</title>
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+</head>
+<body>
+<nav th:fragment="main_sidebar">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img th:src="@{/images/logo2.png}" alt="logo" class="logo">
+
+            <h1>찬형대학교</h1>
+<!--            <p class="student-name" sec:authorize="isAuthenticated()" th:text="${#authentication.principal.name}">학색이름</p>-->
+        </div>
+        <ul>
+            <li><a href="#notice">학사공지</a></li>
+            <li><a href="#course-list">수강목록</a></li>
+            <li><a href="#my-courses">내 수강목록</a></li>
+            <li><a href="#inquiry">문의하기</a></li>
+        </ul>
+        <div class="action-buttons">
+            <a sec:authorize="isAuthenticated()" th:href="@{/logout}">로그아웃</a>
+            <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/admin}">관리자 페이지</a>
+        </div>
+    </aside>
+</nav>
+</body>
+</html>
