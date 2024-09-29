@@ -1,4 +1,4 @@
-package com.example.chanhyunguniversity;
+package com.example.chanhyunguniversity.config;
 
 import com.example.chanhyunguniversity.config.UserRole;
 import com.example.chanhyunguniversity.domain.UserEntity;

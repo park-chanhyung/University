@@ -56,6 +56,17 @@ public class SubjectEntity {
     @JoinColumn(name = "professor_id", nullable = false)
     private ProfessorEntity professor;
 
-    @OneToMany(mappedBy = "subject")
+    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CourseRegistrationEntity> registrations;
+
+
+    public void removeRegistrations(){
+        for (CourseRegistrationEntity registration : this.registrations) {
+            UserEntity student = registration.getStudent();
+            if(student != null){
+                student.removeCredits(Integer.parseInt(this.credits));
+            }
+        }
+        this.registrations.clear();
+    }
 }

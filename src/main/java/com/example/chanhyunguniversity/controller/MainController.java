@@ -33,8 +33,11 @@ public class MainController {
         return "login";
     }
     @GetMapping("/login")
-    public String login() {
-
+    public String login(Model model) {
+        Optional<NoticeEntity> latestFixedNotice = noticeService.getLatestFixedNotice();
+        latestFixedNotice.ifPresent(notice ->{
+            model.addAttribute("fixedNotice", notice);
+        });
         return "login";
     }
 
@@ -50,7 +53,11 @@ public class MainController {
         Optional<UserEntity> userOptional = userService.getUserByUsername(username);
 
         if (userOptional.isPresent()) {
+
+
             UserEntity user = userOptional.get();
+            model.addAttribute("name", user.getName());
+
             List<SubjectEntity> registeredSubjects = subjectService.getRegisteredSubjects(username);
             List<String> departments = subjectService.getAllDepartments();
             List<String> classifications = subjectService.getAllClassifications();
@@ -69,6 +76,43 @@ public class MainController {
 
         }
         return "main";
+
+    }
+
+    @GetMapping("/subjectList")
+    public String subjectList(Model model, Principal principal,
+                           @RequestParam(value = "kw", defaultValue = "") String kw,
+                           @RequestParam(value = "grade", defaultValue = "") String grade,
+                           @RequestParam(value = "department", defaultValue = "") String department,
+                           @RequestParam(value = "classification", defaultValue = "") String classification,
+                           @RequestParam(value = "page", defaultValue = "0") int page) {
+        String username = principal.getName();
+        Optional<UserEntity> userOptional = userService.getUserByUsername(username);
+
+        if (userOptional.isPresent()) {
+
+
+            UserEntity user = userOptional.get();
+            model.addAttribute("name", user.getName());
+
+            List<SubjectEntity> registeredSubjects = subjectService.getRegisteredSubjects(username);
+            List<String> departments = subjectService.getAllDepartments();
+            List<String> classifications = subjectService.getAllClassifications();
+            Page<SubjectEntity> subjectPage = subjectService.getList(page, kw, grade, department, classification);
+
+            model.addAttribute("ableCredits", user.getAbleCredits());
+            model.addAttribute("totalCredits", user.getTotalCredits());
+            model.addAttribute("kw", kw);
+            model.addAttribute("grade", grade);
+            model.addAttribute("department", department);
+            model.addAttribute("classification", classification);
+            model.addAttribute("departments", departments);
+            model.addAttribute("classifications", classifications);
+            model.addAttribute("registeredSubjects", registeredSubjects);
+            model.addAttribute("paging", subjectPage);
+
+        }
+        return "subject_list";
     }
     @GetMapping("/search")
    public String searchByClassNumber(@RequestParam("classNumber") String classNumber, Principal principal, Model model, RedirectAttributes redirectAttributes){

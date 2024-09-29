@@ -1,6 +1,5 @@
 package com.example.chanhyunguniversity.config;
 
-import com.example.chanhyunguniversity.UserDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,9 +30,10 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form.loginPage("/login").permitAll()
                         .defaultSuccessUrl("/main"))
+
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                        .logoutSuccessUrl("/login")
+                        .logoutSuccessUrl("/")
                         .invalidateHttpSession(true))
                 .csrf(AbstractHttpConfigurer::disable);
 

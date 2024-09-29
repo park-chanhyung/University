@@ -1,5 +1,6 @@
 package com.example.chanhyunguniversity.service;
 
+import com.example.chanhyunguniversity.config.DataNotFoundException;
 import com.example.chanhyunguniversity.domain.CourseRegistrationEntity;
 import com.example.chanhyunguniversity.domain.ProfessorEntity;
 import com.example.chanhyunguniversity.domain.SubjectEntity;
@@ -31,9 +32,10 @@ public class SubjectService {
     private final ProfessorRepository professorRepository;
     private final UserRepository userRepository;
     private final CourseRegistrationRepository courseRegistrationRepository;
+
     public void subjectCreate(String subjectName, String classOverview, String classLocation,
-                                       String classTime, String classNumber, String credits, String classification,
-                                       Integer totalCapacity, String subjectGrade, String professorName, String department) {
+                              String classTime, String classNumber, String credits, String classification,
+                              Integer totalCapacity, String subjectGrade, String professorName, String department) {
 
         ProfessorEntity professor = professorRepository.findByProfessorName(professorName);
         SubjectEntity subject = new SubjectEntity();
@@ -52,7 +54,7 @@ public class SubjectService {
         this.subjectRepository.save(subject);
     }
 
-    public void updateSubject(SubjectEntity s,String subjectName, String classOverview, String classLocation,
+    public void updateSubject(SubjectEntity s, String subjectName, String classOverview, String classLocation,
                               String classTime, String classNumber, String credits, String classification,
                               Integer totalCapacity, String subjectGrade, String professorName, String department) {
 
@@ -74,23 +76,26 @@ public class SubjectService {
     }
 
     public void deleteSubject(SubjectEntity subjectEntity) {
-        this.subjectRepository.delete(subjectEntity);
-    }
+            subjectEntity.removeRegistrations();
+            this.subjectRepository.delete(subjectEntity);
+        }
+
+
 
     public void registerSubject(Long subjectId, String username) {
         SubjectEntity subject = subjectRepository.findById(subjectId)
-                .orElseThrow(() -> new RuntimeException("Subject not found"));
+                .orElseThrow(() -> new DataNotFoundException("Subject not found"));
         UserEntity student = userRepository.findByusername(username)
-                .orElseThrow(() -> new RuntimeException("student not found"));
+                .orElseThrow(() -> new DataNotFoundException("student not found"));
 
-        boolean alreadyRegistered = courseRegistrationRepository.existsByStudentAndSubject(student,subject);
-        if(alreadyRegistered){
-            throw new RuntimeException("이미 신청한 과목입니다.");
+        boolean alreadyRegistered = courseRegistrationRepository.existsByStudentAndSubject(student, subject);
+        if (alreadyRegistered) {
+            throw new DataNotFoundException("이미 신청한 과목입니다.");
 
         }
 
         if (subject.getRemainCapacity() <= 0) {
-            throw new RuntimeException("정원초과된 과목입니다.");
+            throw new DataNotFoundException("정원초과된 과목입니다.");
         }
         CourseRegistrationEntity registration = new CourseRegistrationEntity();
         registration.setStudent(student);
@@ -110,7 +115,7 @@ public class SubjectService {
 
     public List<SubjectEntity> getRegisteredSubjects(String username) {
         UserEntity student = userRepository.findByusername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new DataNotFoundException("User not found"));
         List<CourseRegistrationEntity> registrations =
                 courseRegistrationRepository.findByStudent(student);
 
@@ -129,14 +134,14 @@ public class SubjectService {
                 .findBySubjectIdAndStudentUsername(subjectId, username);
 
         if (registrations.isEmpty()) {
-            throw new RuntimeException("Registration not found");
+            throw new DataNotFoundException("Registration not found");
         }
 
         // 모든 중복 등록을 취소
         for (CourseRegistrationEntity registration : registrations) {
             courseRegistrationRepository.delete(registration);
-           SubjectEntity subject = registration.getSubject();
-           student.removeCredits(Integer.parseInt(subject.getCredits()));
+            SubjectEntity subject = registration.getSubject();
+            student.removeCredits(Integer.parseInt(subject.getCredits()));
             subject.setRemainCapacity(subject.getRemainCapacity() + 1);
             subjectRepository.save(subject);
         }
@@ -147,7 +152,7 @@ public class SubjectService {
         if (subject.isPresent()) {
             return subject.get();
         } else {
-            throw new RuntimeException("Subject not found");
+            throw new DataNotFoundException("Subject not found");
         }
     }
 
@@ -166,10 +171,11 @@ public class SubjectService {
             );
         };
     }
+
     public Page<SubjectEntity> getList(int page, String kw, String grade, String department, String classification) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("classification").nullsLast());
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+        Pageable pageable = PageRequest.of(page, 5, Sort.by(sorts));
         Specification<SubjectEntity> spec = search(kw, grade, department, classification);
         return this.subjectRepository.findAll(spec, pageable);
     }
@@ -224,8 +230,8 @@ public class SubjectService {
                 .collect(Collectors.toList());
     }
 
-    public SubjectEntity searchClassNumber(String classNumber){
-        return subjectRepository.findByClassNumber(classNumber).orElseThrow(()-> new RuntimeException("찾을수없는 과목코드입니다."));
+    public SubjectEntity searchClassNumber(String classNumber) {
+        return subjectRepository.findByClassNumber(classNumber).orElseThrow(() -> new DataNotFoundException("찾을수없는 과목코드입니다."));
     }
 }
 ///public SubjectEntity findByClassNumber(String classNumber) {

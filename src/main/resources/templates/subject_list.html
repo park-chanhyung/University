@@ -1,25 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>찬형대학교 수강신청 메인 페이지</title>
+    <title>Title</title>
     <link rel="stylesheet" th:href="@{/css/sidebar.css}">
     <link rel="stylesheet" th:href="@{/css/main.css}">
-
 </head>
 <body>
-<!--<header>-->
-<!--    <div class="header-content">-->
-<!--        <div class="header-left">-->
-<!--           <img th:src="@{/images/logo2.png}" alt="logo" class="logo">-->
-<!--            <h1>찬형대학교 수강신청 시스템</h1>-->
-<!--        </div>-->
-<!--        <div class="action-buttons">-->
-<!--            <a sec:authorize="isAuthenticated()" th:href="@{/logout}">로그아웃</a>-->
-<!--            <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/admin}">관리자 페이지</a>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</header>-->
 <div class="content-wrapper">
     <aside th:replace="~{main_sidebar :: main_sidebar}"></aside>
 
@@ -109,53 +96,5 @@
                     <a th:href="@{/main(page=${paging.number + 1}, kw=${param.kw}, grade=${param.grade}, department=${param.department}, classification=${param.classification})}" th:if="${paging.number < paging.totalPages - 1}">다음</a>
                     <a th:href="@{/main(page=${paging.totalPages - 1}, kw=${param.kw}, grade=${param.grade}, department=${param.department}, classification=${param.classification})}">마지막 &raquo;</a>
                 </div>
-                <section  class="my-courses" sec:authorize="hasRole('ROLE_student')" style="margin-top: 20px;">
-                    <h3>내 수강 신청 현황</h3>
-                    내 신청학점 <span th:text="${totalCredits}"></span> / <span th:text="${ableCredits}"></span>
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>과목명</th>
-                            <th>분류</th>
-                            <th>담당 교수</th>
-                            <th>학점</th>
-                            <th>수업 시간</th>
-                            <th>강의실</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="registeredSubjects : ${registeredSubjects}">
-                            <td th:text="${registeredSubjects.subjectName}"></td>
-                            <td th:text="${registeredSubjects.classification}"></td>
-                            <td th:text="${registeredSubjects.professor != null ? registeredSubjects.professor.professorName : '미정'}"></td>
-                            <td th:text="${registeredSubjects.credits}"></td>
-                            <td th:text="${registeredSubjects.classTime}"></td>
-                            <td th:text="${registeredSubjects.classLocation}"></td>
-                            <td sec:authorize="hasRole('ROLE_student')">
-                                <form th:action="@{/subject/cancel}" method="post">
-                                    <input type="hidden" name="subjectId" th:value="${registeredSubjects.id}  "/>
-                                    <button type="submit" onclick="return confirm('정말로 수강을 취소하시겠습니까?');">수강 취소</button>
-                                </form>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </section>
-                </div>
-            </main>
-        </div>
-<!--        <footer>-->
-<!--            <p>&copy; 2024 찬형대학교. All rights reserved.</p>-->
-<!--        </footer>-->
 </body>
-
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    var message = /*[[${message}]]*/ null;
-    if (message) {
-        alert(message);
-    }
-    /*]]>*/
-</script>
 </html>

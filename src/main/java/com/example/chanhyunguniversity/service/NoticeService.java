@@ -1,5 +1,6 @@
 package com.example.chanhyunguniversity.service;
 
+import com.example.chanhyunguniversity.config.DataNotFoundException;
 import com.example.chanhyunguniversity.domain.NoticeEntity;
 import com.example.chanhyunguniversity.repository.NoticeRepository;
 import jakarta.transaction.Transactional;
@@ -51,7 +52,7 @@ public class NoticeService {
 
     public NoticeEntity getNotice(Long id) {
         return this.noticeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("찾을 수 없는 공지입니다. ID: " + id));
+                .orElseThrow(() -> new DataNotFoundException("찾을 수 없는 공지입니다. ID: " + id));
     }
     public Optional<NoticeEntity> getLatestFixedNotice() {
         return noticeRepository.findLatestFixedNotice();

@@ -2,8 +2,10 @@ package com.example.chanhyunguniversity.controller;
 
 
 import com.example.chanhyunguniversity.domain.NoticeEntity;
+import com.example.chanhyunguniversity.domain.UserEntity;
 import com.example.chanhyunguniversity.form.NoticeForm;
 import com.example.chanhyunguniversity.service.NoticeService;
+import com.example.chanhyunguniversity.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -14,13 +16,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/notice")
 @RequiredArgsConstructor
 public class NoticeController {
     private final NoticeService noticeService;
+    private final UserService userService;
     @GetMapping("/create")
     private String createNotice(NoticeForm noticeForm){
         return "/notice_create";
@@ -35,8 +40,15 @@ public class NoticeController {
 
     }
     @GetMapping("/list")
-    private String getlist(Model model){
+    private String getlist(Model model, Principal principal){
         List<NoticeEntity> list = noticeService.getList();
+        String username = principal.getName();
+        Optional<UserEntity> userOptional = userService.getUserByUsername(username);
+
+        if (userOptional.isPresent()) {
+            UserEntity user = userOptional.get();
+            model.addAttribute("name", user.getName());
+        }
         model.addAttribute("list",list);
 
         return "/notice_list";

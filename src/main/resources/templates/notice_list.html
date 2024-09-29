@@ -1,32 +1,33 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:layout="http://www.w3.org/1999/xhtml"
-      layout:decorate="~{layout}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <title>공지사항</title>
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/css/notice.css}">
+
 </head>
 <body>
+<div class="content-wrapper">
+    <div th:replace="main_sidebar :: main_sidebar"></div>
 
-
-<div layout:fragment="content" class="container my-3">
-
-<h2>공지사항</h2>
-
-<div th:each="noticelist : ${list}">
-    <div class="notice-item" th:onclick="'toggleContent(' + ${noticelist.id} + ')'">
-        <span th:text="${noticelist.title}"></span>
-        <span th:text="${#temporals.format(noticelist.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
-    </div>
-
-    <div class="notice-content" th:id="'content-' + ${noticelist.id}" style="display: none;">
-        <p th:text="${noticelist.content}"></p>
-    </div>
-
-    <a th:href="@{'/notice/update/' + ${noticelist.id}}">수정하기</a>
-
-    <form th:id="'deleteForm-' + ${noticelist.id}" th:action="@{'/notice/delete/' + ${noticelist.id}}" method="post" style="display: inline;">
-        <button type="button" th:onclick="'confirmDelete(' + ${noticelist.id} + ')'">삭제하기</button>
-    </form>
-</div>
+    <main class="main-content">
+        <h2>학사공지</h2>
+        <div class="notice-list">
+            <div th:each="notice : ${list}" class="notice-item">
+                <div class="notice-header" th:onclick="'toggleContent(' + ${notice.id} + ')'">
+                    <h3 th:text="${notice.title}">공지사항 제목</h3>
+                    <span class="notice-date" th:text="${#temporals.format(notice.createdAt, 'yyyy-MM-dd HH:mm')}">날짜</span>
+                </div>
+                <div th:id="'content-' + ${notice.id}" class="notice-content" style="display: none;">
+                    <p th:text="${notice.content}">공지사항 내용</p>
+                </div>
+                <div class="notice-actions">
+                    <a th:href="@{'/notice/update/' + ${notice.id}}" sec:authorize="hasRole('ROLE_ADMIN')" class="btn btn-edit">수정하기</a>
+                    <button th:onclick="'deleteNotice(' + ${notice.id} + ')'"  sec:authorize="hasRole('ROLE_ADMIN')" class="btn btn-delete">삭제하기</button>
+                </div>
+            </div>
+        </div>
+    </main>
 
 </body>
 <script>

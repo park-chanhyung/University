@@ -1,0 +1,110 @@
+.main-content {
+    margin-left: 250px; /* sidebar 너비만큼 여백 */
+    padding: 20px;
+}
+
+.notice-list {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+.notice-item {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 50px;
+
+    /*padding-left: 50px;*/
+    /*padding-bottom: 50px;*/
+
+}
+
+.notice-item:last-child {
+    border-bottom: none;
+}
+
+.notice-header {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notice-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #0a192f;
+}
+
+.notice-date {
+    font-size: 14px;
+    color: #666;
+}
+
+.notice-content {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+}
+
+.notice-actions {
+    margin-top: 10px;
+    text-align: right;
+}
+
+.btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.btn-edit {
+    background-color: #4caf50;
+    color: white;
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+.btn-delete {
+    background-color: #f44336;
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+h2{
+    padding-left: 50px;
+    margin-top: 60px;
+    margin-bottom: 60px;
+
+}
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+        padding: 10px;
+    }
+
+    .notice-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .notice-date {
+        margin-top: 5px;
+    }
+
+    .notice-actions {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .btn {
+        flex: 1;
+        margin: 0 5px;
+    }
+}
