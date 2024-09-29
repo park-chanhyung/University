@@ -25,13 +25,14 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/admin/check-password","/admin/signup", "/login","/admin/adminCheck" ,"/signup","/").permitAll()
+                      // 정적 리소스 사용
+                        .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**", "/favicon.*", "/*/icon-*").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.loginPage("/login").permitAll()
-                        .defaultSuccessUrl("/main"))
-
-                .logout(logout -> logout
+                        .defaultSuccessUrl("/main", true))
+                        .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                         .logoutSuccessUrl("/")
                         .invalidateHttpSession(true))
