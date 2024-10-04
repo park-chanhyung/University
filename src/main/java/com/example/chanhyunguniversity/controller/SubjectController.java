@@ -126,7 +126,7 @@ public class SubjectController {
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("message", e.getMessage());
         }
-        return "redirect:/main";  // 메인 페이지로 리다이렉트
+        return "redirect:/main";
     }
 
     //수강취소
@@ -134,7 +134,11 @@ public class SubjectController {
     public String cancelSubjectRegistration(@RequestParam("subjectId") Long subjectId, Principal principal) {
         String username = principal.getName();
         subjectService.cancelSubjectRegistration(subjectId, username);
-        return "redirect:/main";  // 또는 적절한 페이지로 리다이렉트
+        return "redirect:/main"; 
+    }
+    @GetMapping("/subjectInfo")
+    public String subjectInfo(@RequestParam("subjectId")Long subjectId){
+        return "redirect:/main";
     }
 }
 

@@ -109,9 +109,6 @@ public class SubjectService {
         subjectRepository.save(subject);
     }
 
-    public List<SubjectEntity> getAllSubjects() {
-        return subjectRepository.findAll();
-    }
 
     public List<SubjectEntity> getRegisteredSubjects(String username) {
         UserEntity student = userRepository.findByusername(username)
@@ -156,21 +153,13 @@ public class SubjectService {
         }
     }
 
-    private Specification<SubjectEntity> search(String kw) {
-        return (root, query, cb) -> {
-            query.distinct(true);
-            String likeKeyword = "%" + kw + "%";
-
-            Join<SubjectEntity, ProfessorEntity> professorJoin = root.join("professor", JoinType.LEFT);
-
-            return cb.or(
-                    cb.like(root.get("subjectName"), likeKeyword),
-                    cb.like(root.get("department"), likeKeyword),
-                    cb.like(root.get("subjectGrade"), likeKeyword),
-                    cb.like(professorJoin.get("professorName"), likeKeyword)
-            );
-        };
+    public Page<SubjectEntity> getList(int page , int size){
+        Pageable pageable = PageRequest.of(
+                page,size , Sort.by("id").descending());
+        return this.subjectRepository.findAll(pageable);
     }
+
+
 
     public Page<SubjectEntity> getList(int page, String kw, String grade, String department, String classification) {
         List<Sort.Order> sorts = new ArrayList<>();

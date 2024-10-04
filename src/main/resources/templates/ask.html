@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/css/ask.css}">
+
+</head>
+<body>
+<aside th:replace="~{main_sidebar :: main_sidebar}"></aside>
+<h2>문의하기</h2>
+<div class="card">
+    <h3>문의하기</h3>
+    <a class="btn" th:href="@{/ask/create}">문의 작성하기</a>
+</div>
+<div class="card">
+    <h3>내 문의 내역</h3>
+    <a class="btn" th:href="@{/ask/list}">문의 내역 보기</a>
+</div>
+
+</body>
+</html>

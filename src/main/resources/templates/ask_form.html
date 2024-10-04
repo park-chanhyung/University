@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/css/ask.css}">
+</head>
+<body>
+<aside th:replace="~{main_sidebar :: main_sidebar}"></aside>
+<h2>새 문의 작성</h2>
+<form th:action="@{/ask/create}" th:object="${askForm}" method="post">
+    <div class="form-group">
+        <label for="title">제목</label>
+        <input type="text" id="title" th:field="*{title}">
+        <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+    </div>
+    <div class="form-group">
+        <label for="content">내용</label>
+        <textarea id="content" th:field="*{content}"></textarea>
+        <div class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></div>
+    </div>
+    <div class="form-group">
+        <label for="phoneNumber">연락처</label>
+        <input type="text" id="phoneNumber" th:field="*{phoneNumber}">
+    </div>
+    <button type="submit" class="btn btn-primary">제출</button>
+</form>
+</body>
+</html>

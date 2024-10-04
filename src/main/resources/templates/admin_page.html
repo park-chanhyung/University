@@ -6,52 +6,68 @@
     <title>Title</title>
 </head>
 <body>
+<div class="container my-3" layout:fragment="content">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>과목명</th>
+            <th>분류</th>
+            <th>담당 교수</th>
+            <th>학점</th>
+            <th>수업 시간</th>
+            <th>강의실</th>
+            <th>수강 인원</th>
+            <th>남은 자리</th>
+            <th>수강신청</th>
+            <th>수정하기</th>
+            <th>삭제하기</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="subject : ${paging.content}">
+            <td th:text="${subject.subjectName}"></td>
+            <td th:text="${subject.classification}"></td>
+            <td th:text="${subject.professor.professorName}"></td>
+            <td th:text="${subject.credits}"></td>
+            <td th:text="${subject.classTime}"></td>
+            <td th:text="${subject.classLocation}"></td>
+            <td th:text="${subject.totalCapacity}"></td>
+            <td th:text="${subject.remainCapacity}"></td>
+            <td>
+                <a th:href="@{/subject/register/{id}(id=${subject.id})}" class="btn btn-primary btn-sm">수강신청</a>
+            </td>
+            <td>
+                <a th:href="@{/subject/modify/{id}(id=${subject.id})}" class="btn btn-warning btn-sm">수정</a>
+            </td>
+            <td>
+                <a th:href="@{/subject/delete/{id}(id=${subject.id})}" class="btn btn-danger btn-sm">삭제</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
-<div layout:fragment="content" class="container my-3">
-
-
-<table>
-    <thead>
-    <tr>
-        <th>과목명</th>
-        <th>분류</th>
-        <th>담당 교수</th>
-        <th>학점</th>
-        <th>수업 시간</th>
-        <th>강의실</th>
-        <th>수강 인원</th>
-        <th>남은 자리</th>
-        <th></th>
-
-        </th>
-        <th sec:authorize="hasRole('ROLE_ADMIN')">수정</th>
-        <th sec:authorize="hasRole('ROLE_ADMIN')">삭제</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="subject : ${subjects}">
-        <td th:text="${subject.subjectName}"></td>
-        <td th:text="${subject.classification}"></td>
-        <td th:text="${subject.professor != null ? subject.professor.professorName : '미정'}"></td>
-        <td th:text="${subject.credits}"></td>
-        <td th:text="${subject.classTime}"></td>
-        <td th:text="${subject.classLocation}"></td>
-        <td th:text="${subject.totalCapacity}"></td>
-        <td th:text="${subject.remainCapacity}"></td>
-        <th sec:authorize="hasRole('ROLE_ADMIN')">
-            <form th:action="@{|/subject/update/${subject.id}|}" method="post">
-                <input type="hidden" name="subjectId" th:value="${subject.id}" />
-                <button class="register-btn" type="submit" th:value="수정하기">수정하기
-                </button>
-            </form>
-            <form th:action="@{|/subject/delete/${subject.id}|}">
-                <input type="hidden" name="subjectId" th:value="${subject.id}" />
-                <button class="register-btn" type="submit" th:value="삭제하기">삭제하기
-                </button>
-            </form>
-    </tr>
-    </tbody>
-</table>
+    <!-- 페이징 -->
+    <nav aria-label="Page navigation" th:if="${paging.totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${paging.number == 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin(page=0)}">««</a>
+            </li>
+            <li class="page-item" th:classappend="${paging.number == 0} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin(page=${paging.number - 1})}">«</a>
+            </li>
+            <li class="page-item" th:each="pageNum : ${#numbers.sequence(paging.number - 2, paging.number + 2)}"
+                th:if="${pageNum >= 0 && pageNum < paging.totalPages}"
+                th:classappend="${pageNum == paging.number} ? 'active'">
+                <a class="page-link" th:href="@{/admin(page=${pageNum})}" th:text="${pageNum + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${paging.number == paging.totalPages - 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin(page=${paging.number + 1})}">»</a>
+            </li>
+            <li class="page-item" th:classappend="${paging.number == paging.totalPages - 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin(page=${paging.totalPages - 1})}">»»</a>
+            </li>
+        </ul>
+    </nav>
 </div>
 </body>
 </html>

@@ -1,5 +1,6 @@
 package com.example.chanhyunguniversity.controller;
 
+import com.example.chanhyunguniversity.domain.AskEntity;
 import com.example.chanhyunguniversity.domain.SubjectEntity;
 import com.example.chanhyunguniversity.form.AdminCreateForm;
 import com.example.chanhyunguniversity.form.SubjectForm;
@@ -9,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -29,11 +32,14 @@ public class AdminController {
     private String adminPassword;
 
     @GetMapping
-    public String adminPage(Model model){
-        List<SubjectEntity> subjects = subjectService.getAllSubjects();
-        model.addAttribute("subjects", subjects);
+    public String adminPage(Model model,
+                            @RequestParam(value = "page" , defaultValue ="0") int page,
+                            @RequestParam(value = "size", defaultValue = "8") int size){
+        Page<SubjectEntity> subjectPage = subjectService.getList(page,size);
+        model.addAttribute("paging", subjectPage);
         return "admin_page";
     }
+
     @GetMapping("/adminCheck")
     public String adminPasswordPage() {
         return "admin_check";
@@ -42,7 +48,7 @@ public class AdminController {
     @PostMapping("/check-password")
     public String checkAdminPassword(@RequestParam String adminPassword) {
         if (this.adminPassword.equals(adminPassword)) {
-            return "redirect:/admin/signup";  // 회원가입 페이지로 리다이렉트
+            return "redirect:/admin/signup";
         }
         return "redirect:/admin?error";
     }
@@ -71,4 +77,7 @@ public class AdminController {
             }
             return "redirect:/login";
     }
+
+
+
 }
