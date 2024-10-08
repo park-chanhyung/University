@@ -4,23 +4,29 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link rel="stylesheet" th:href="@{/css/sidebar.css}">
-    <link rel="stylesheet" th:href="@{/css/ask.css}">
+    <link rel="stylesheet" th:href="@{/css/ask_detail.css}">
 </head>
 <body>
 <aside th:replace="~{main_sidebar :: main_sidebar}"></aside>
-<h2>문의 상세</h2>
-<div class="card">
-    <div class="card-body">
-        <h5 class="card-title" th:text="${ask.title}"></h5>
-        <h6 class="card-subtitle mb-2 text-muted"
-            th:text="${#temporals.format(ask.createdAt, 'yyyy-MM-dd HH:mm')}"></h6>
-        <p><strong>상태:</strong> <span th:text="${ask.status}"></span></p>
-        <div class="mt-4" th:if="${ask.answer}">
-            <h5>답변</h5>
-            <p th:text="${ask.answer}"></p>
+<div class="main-content">
+    <div class="content-wrapper">
+        <h2>문의 상세</h2>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title" th:text="${ask.title}"></h5>
+                <h6 class="card-subtitle" th:text="${#temporals.format(ask.createdAt, 'yyyy-MM-dd HH:mm')}"></h6>
+                <p class="status" th:class="${ask.status == '답변완료' ? 'status-answered' : 'status-pending'}">
+                    <strong>상태:</strong> <span th:text="${ask.status}"></span>
+                </p>
+                <p th:text="${ask.content}"></p>
+                <div class="answer-section" th:if="${ask.answer}">
+                    <h5>답변</h5>
+                    <p th:text="${ask.answer}"></p>
+                </div>
+            </div>
         </div>
+        <a class="btn" th:href="@{/ask/list}">목록으로</a>
     </div>
 </div>
-<a class="btn btn-primary mt-3" th:href="@{/ask/list}">목록으로</a>
 </body>
 </html>

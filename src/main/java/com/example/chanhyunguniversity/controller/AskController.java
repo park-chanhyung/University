@@ -72,6 +72,7 @@ public class AskController {
     public String userAskList(Model model, Principal principal) {
         String username = principal.getName();
         List<AskEntity> askList = askService.getAskByUsername(username);
+        model.addAttribute("askList",askList);
         return "ask_list";
     }
     @GetMapping("/detail/{id}")

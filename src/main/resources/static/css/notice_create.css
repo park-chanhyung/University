@@ -1,0 +1,41 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.card {
+    border: none;
+    border-radius: 10px;
+    height: 700px;
+
+}
+
+.card-title {
+    color: #0a192f;
+    font-weight: bold;
+}
+
+.form-label {
+    font-weight: 500;
+}
+
+.form-control:focus {
+    border-color: #0a192f;
+    box-shadow: 0 0 0 0.2rem rgba(10, 25, 47, 0.25);
+}
+
+.btn-primary {
+    height: 50px;
+    background-color: #0a192f;
+    border-color: #0a192f;
+}
+
+.btn-primary:hover {
+
+    background-color: #152e4d;
+    border-color: #152e4d;
+}
+
+.text-danger {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}

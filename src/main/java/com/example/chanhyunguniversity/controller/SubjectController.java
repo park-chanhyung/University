@@ -140,5 +140,7 @@ public class SubjectController {
     public String subjectInfo(@RequestParam("subjectId")Long subjectId){
         return "redirect:/main";
     }
+
+
 }
 

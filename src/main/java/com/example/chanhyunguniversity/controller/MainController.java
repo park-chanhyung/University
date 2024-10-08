@@ -122,6 +122,7 @@ public class MainController {
             model.addAttribute("subjcet",subject);
             String username = principal.getName();
             Optional<UserEntity> userByUsername = userService.getUserByUsername(username);
+
             if(userByUsername.isPresent()) {
                 UserEntity user = userByUsername.get();
                 List<SubjectEntity> registeredSubjects = subjectService.getRegisteredSubjects(username);
@@ -142,5 +143,21 @@ public class MainController {
             redirectAttributes.addFlashAttribute("message","찾을 수 없는 과목코드입니다.");
             return "redirect:/main";
         }
+    }
+    @GetMapping("/myList")
+    public String mySubjectList(Principal principal,Model model){
+        String username = principal.getName();
+        Optional<UserEntity> userOptional = userService.getUserByUsername(username);
+        List<SubjectEntity> registeredSubjects = subjectService.getRegisteredSubjects(username);
+
+        if (userOptional.isPresent()) {
+            UserEntity user = userOptional.get();
+            model.addAttribute("name", user.getName());
+            model.addAttribute("registeredSubjects", registeredSubjects);
+            model.addAttribute("ableCredits", user.getAbleCredits());
+            model.addAttribute("totalCredits", user.getTotalCredits());
+        }
+
+        return "subject_mylist";
     }
 }

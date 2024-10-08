@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/admin_navbar.css}">
 </head>
 <body>
 <div class="container my-3" layout:fragment="content">
@@ -18,7 +19,6 @@
             <th>강의실</th>
             <th>수강 인원</th>
             <th>남은 자리</th>
-            <th>수강신청</th>
             <th>수정하기</th>
             <th>삭제하기</th>
         </tr>
@@ -33,9 +33,6 @@
             <td th:text="${subject.classLocation}"></td>
             <td th:text="${subject.totalCapacity}"></td>
             <td th:text="${subject.remainCapacity}"></td>
-            <td>
-                <a th:href="@{/subject/register/{id}(id=${subject.id})}" class="btn btn-primary btn-sm">수강신청</a>
-            </td>
             <td>
                 <a th:href="@{/subject/modify/{id}(id=${subject.id})}" class="btn btn-warning btn-sm">수정</a>
             </td>
