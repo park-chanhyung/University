@@ -41,7 +41,7 @@ dependencies {
     implementation group: 'org.apache.poi', name: 'poi', version: '5.0.0'
     implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.0.0'
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
-
+    testRuntimeOnly 'com.h2database:h2'
 
 }
 
