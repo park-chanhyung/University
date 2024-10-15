@@ -8,6 +8,7 @@ class ChanhyungUniversityApplicationTests {
 
     @Test
     void contextLoads() {
+        // 간단한 테스트로 시작
+        assert(true);
     }
-
 }
