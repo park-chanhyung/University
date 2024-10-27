@@ -28,7 +28,7 @@ public class NoticeController {
     private final UserService userService;
     @GetMapping("/create")
     private String createNotice(NoticeForm noticeForm){
-        return "/notice_create";
+        return "notice_create";
     }
     @PostMapping("/create")
     private String createNotice(@Valid NoticeForm noticeForm,BindingResult bindingResult){
@@ -51,7 +51,7 @@ public class NoticeController {
         }
         model.addAttribute("list",list);
 
-        return "/notice_list";
+        return "notice_list";
 
     }
     @GetMapping("/update/{id}")
@@ -61,10 +61,12 @@ public class NoticeController {
         noticeForm.setTitle(noticeEntity.getTitle());
         noticeForm.setContent(noticeEntity.getContent());
         noticeForm.setFixNotice(noticeEntity.isFixNotice());
+
         model.addAttribute("noticeForm", noticeForm);
         model.addAttribute("noticeId", id);
         return "notice_create";
     }
+
     @PostMapping("/update/{id}")
     public String updateNotice(@Valid NoticeForm noticeForm, BindingResult bindingResult,
                                @PathVariable("id") Long id, Model model) {
@@ -72,11 +74,12 @@ public class NoticeController {
             model.addAttribute("noticeId", id);
             return "notice_create";
         }
+
         this.noticeService.updateNotice(id, noticeForm.getTitle(), noticeForm.getContent(), noticeForm.isFixNotice());
         return "redirect:/notice/list";
     }
 
-    @PostMapping("/delete/{id}")
+    @GetMapping("/delete/{id}")
     public String deleteNotice(@PathVariable("id") Long id) {
         this.noticeService.deleteNotice(id);
         return "redirect:/notice/list";

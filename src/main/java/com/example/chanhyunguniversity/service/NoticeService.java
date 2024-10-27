@@ -27,19 +27,19 @@ public class NoticeService {
         this.noticeRepository.save(noticeEntity);
     }
 
-    @Transactional
     public void updateNotice(Long id, String title, String content ,boolean fixNotice) {
         NoticeEntity notice = this.getNotice(id);
         notice.setTitle(title);
         notice.setContent(content);
         notice.setFixNotice(fixNotice);
-        notice.setCreatedAt(LocalDateTime.now());
+        this.noticeRepository.save(notice);
     }
-    @Transactional
+
     public void deleteNotice(Long id) {
         NoticeEntity notice = this.getNotice(id);
         this.noticeRepository.delete(notice);
     }
+
     public List<NoticeEntity> getList() {
         List<NoticeEntity> fixedNotices = noticeRepository.findByFixNoticeOrderByCreatedAtDesc(true);
         List<NoticeEntity> normalNotices = noticeRepository.findByFixNoticeOrderByCreatedAtDesc(false);

@@ -1,5 +1,6 @@
 package com.example.chanhyunguniversity.controller;
 
+import com.example.chanhyunguniversity.config.DataNotFoundException;
 import com.example.chanhyunguniversity.domain.ProfessorEntity;
 import com.example.chanhyunguniversity.domain.SubjectEntity;
 import com.example.chanhyunguniversity.form.SubjectForm;
@@ -16,6 +17,9 @@ import org.springframework.web.service.annotation.PostExchange;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -26,7 +30,13 @@ public class SubjectController {
 
     private final SubjectService subjectService;
     private final ProfessorRepository professorRepository;
-
+    @ModelAttribute("professors")
+    public List<ProfessorEntity> getProfessors() {
+        List<ProfessorEntity> professors = professorRepository.findAll();
+        System.out.println("교수 목록 크기: " + professors.size());  // 디버깅용
+        professors.forEach(p -> System.out.println("교수 이름: " + p.getProfessorName()));  // 디버깅용
+        return professors;
+    }
     @GetMapping("/create")
     public String create(SubjectForm subjectForm) {
         return "subject_create";
@@ -66,12 +76,11 @@ public class SubjectController {
 //    }
     @GetMapping("/update/{id}")
     //수강변경
-    public String updateSubject(SubjectForm subjectForm, @PathVariable("id") Long id) {
+    public String updateSubject(SubjectForm subjectForm, @PathVariable("id") Long id,Model model) {
 
         SubjectEntity subjectEntity = this.subjectService.getSubject(id);
-        ProfessorEntity professor = professorRepository.findByProfessorName(subjectForm.getProfessorName());
 
-        // SubjectEntity 업데이트
+        // 기존 데이터를 폼에 설정
         subjectForm.setSubjectName(subjectEntity.getSubjectName());
         subjectForm.setClassOverview(subjectEntity.getClassOverview());
         subjectForm.setClassLocation(subjectEntity.getClassLocation());
@@ -80,32 +89,45 @@ public class SubjectController {
         subjectForm.setCredits(subjectEntity.getCredits());
         subjectForm.setClassification(subjectEntity.getClassification());
         subjectForm.setTotalCapacity(subjectEntity.getTotalCapacity());
-        subjectForm.setProfessor(subjectEntity.getProfessor());
-        subjectForm.setDepartment(subjectEntity.getDepartment());  // 교수의 학과로 설정
+        subjectForm.setSubjectGrade(subjectEntity.getSubjectGrade());
+        if (subjectEntity.getProfessor() != null) {
+            subjectForm.setProfessorName(subjectEntity.getProfessor().getProfessorName());
+        }
+        subjectForm.setDepartment(subjectEntity.getDepartment());
 
+        model.addAttribute("subjectForm", subjectForm);
+        model.addAttribute("subjectId", id);
         return "subject_create";
+
     }
 
     @PostMapping("/update/{id}")
-    public String updateSubject(@Valid SubjectForm subjectForm, BindingResult bindingResult, @PathVariable("id") Long id) {
+    public String updateSubject(@Valid SubjectForm subjectForm, BindingResult bindingResult, @PathVariable("id") Long id,Model model) {
 
         if (bindingResult.hasErrors()) {
             return "subject_create";
         }
-        SubjectEntity subjectEntity = this.subjectService.getSubject(id);
-        this.subjectService.updateSubject(subjectEntity,
-                subjectForm.getSubjectName(),
-                subjectForm.getClassOverview(),
-                subjectForm.getClassLocation(),
-                subjectForm.getClassTime(),
-                subjectForm.getClassNumber(),
-                subjectForm.getCredits(),
-                subjectForm.getClassification(),
-                subjectForm.getTotalCapacity(),
-                subjectForm.getSubjectGrade(),
-                subjectForm.getProfessorName(),
-                subjectForm.getDepartment());
-        return "redirect:/admin";
+
+        try {
+            SubjectEntity subjectEntity = this.subjectService.getSubject(id);
+            this.subjectService.updateSubject(subjectEntity,
+                    subjectForm.getSubjectName(),
+                    subjectForm.getClassOverview(),
+                    subjectForm.getClassLocation(),
+                    subjectForm.getClassTime(),
+                    subjectForm.getClassNumber(),
+                    subjectForm.getCredits(),
+                    subjectForm.getClassification(),
+                    subjectForm.getTotalCapacity(),
+                    subjectForm.getSubjectGrade(),
+                    subjectForm.getProfessorName(),
+                    subjectForm.getDepartment());
+            return "redirect:/admin";
+        } catch (DataNotFoundException e) {
+            bindingResult.rejectValue("professorName", "invalid.professorName", e.getMessage());
+            model.addAttribute("professorList", subjectService.getAllProfessors()); // 교수 목록 추가
+            return "subject_create";
+        }
     }
     //수강삭제
     @GetMapping("/delete/{id}")

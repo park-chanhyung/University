@@ -10,7 +10,9 @@
 <body>
 <div class="container my-5" layout:fragment="content" >
 <!--    <h3 class="mb-4">새 과목 생성</h3>-->
-    <form th:action="@{/subject/create}" th:object="${subjectForm}" method="post">
+    <form th:action="${subjectId != null} ? @{/subject/update/{id}(id=${subjectId})} : @{/subject/create}"
+          th:object="${subjectForm}"
+          method="post">
         <div class="row g-3">
             <div class="col-md-6">
                 <label for="classification" class="form-label">분류</label>
@@ -67,8 +69,21 @@
             </div>
             <div class="col-md-4">
                 <label for="professorName" class="form-label">담당 교수</label>
-                <input type="text" th:field="*{professorName}" class="form-control">
-                <p class="text-danger" th:if="${#fields.hasErrors('professorName')}" th:errors="*{professorName}"></p>
+                <select class="form-select" id="professorName" th:field="*{professorName}">
+                    <option value="">담당 교수를 선택하세요</option>
+                    <!-- 목록이 비어있는지 확인 -->
+                    <th:block th:if="${professors != null and not #lists.isEmpty(professors)}">
+                        <option th:each="professor : ${professors}"
+                                th:value="${professor.professorName}"
+                                th:text="${professor.professorName + ' (' + professor.deportment + ')'}">
+                        </option>
+                    </th:block>
+                    <!-- 목록이 비어있을 경우 메시지 표시 -->
+                    <th:block th:if="${professors == null or #lists.isEmpty(professors)}">
+                        <option value="" disabled> 등록된 교수가 없습니다</option>
+                    </th:block>
+                </select>
+                <div class="text-danger" th:if="${#fields.hasErrors('professorName')}" th:errors="*{professorName}"></div>
             </div>
             <div class="col-md-4">
                 <label for="totalCapacity" class="form-label">수강 정원</label>
