@@ -23,7 +23,9 @@
                 </div>
                 <div class="notice-actions">
                     <a th:href="@{'/notice/update/' + ${notice.id}}" sec:authorize="hasRole('ROLE_ADMIN')" class="btn btn-edit">수정하기</a>
-                    <button th:onclick="'deleteNotice(' + ${notice.id} + ')'"  sec:authorize="hasRole('ROLE_ADMIN')" class="btn btn-delete">삭제하기</button>
+<!--                    <button th:onclick="'deleteNotice(' + ${notice.id} + ')'"  sec:authorize="hasRole('ROLE_ADMIN')" >삭제하기</button>-->
+                    <button class="btn btn-delete" th:data-uri="@{'/notice/delete/'+${notice.id}}" sec:authorize="hasRole('ROLE_ADMIN')"
+                            onclick="deleteNotice(this);">삭제하기</button>
                 </div>
             </div>
         </div>
@@ -40,9 +42,9 @@
         }
     }
 
-    function confirmDelete(id) {
-        if (confirm('정말로 이 공지를 삭제하시겠습니까?')) {
-            document.getElementById('deleteForm-' + id).submit();
+    function deleteNotice(element) {
+        if(confirm('정말로 삭제하시겠습니까?')) {
+            location.href = element.dataset.uri;
         }
     }
 </script>

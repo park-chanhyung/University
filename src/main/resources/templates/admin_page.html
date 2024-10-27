@@ -3,7 +3,7 @@
       layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>관리자페이지</title>
     <link rel="stylesheet" th:href="@{/css/admin_navbar.css}">
 </head>
 <body>
@@ -34,7 +34,7 @@
             <td th:text="${subject.totalCapacity}"></td>
             <td th:text="${subject.remainCapacity}"></td>
             <td>
-                <a th:href="@{/subject/modify/{id}(id=${subject.id})}" class="btn btn-warning btn-sm">수정</a>
+                <a th:href="@{/subject/update/{id}(id=${subject.id})}" class="btn btn-warning btn-sm">수정</a>
             </td>
             <td>
                 <a th:href="@{/subject/delete/{id}(id=${subject.id})}" class="btn btn-danger btn-sm">삭제</a>

@@ -13,4 +13,6 @@ public interface SubjectRepository extends JpaRepository<SubjectEntity,Long> {
     Page<SubjectEntity> findAll(Specification<SubjectEntity> spec, Pageable pageable);
 
     Optional<SubjectEntity> findByClassNumber(String classNumber);
+
+    boolean existsByClassNumber(String classNumber);
 }

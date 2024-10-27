@@ -12,12 +12,14 @@ import com.example.chanhyunguniversity.repository.UserRepository;
 import jakarta.persistence.criteria.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -36,8 +38,9 @@ public class SubjectService {
     public void subjectCreate(String subjectName, String classOverview, String classLocation,
                               String classTime, String classNumber, String credits, String classification,
                               Integer totalCapacity, String subjectGrade, String professorName, String department) {
+        ProfessorEntity professor = professorRepository.findFirstByProfessorName(professorName)
+                .orElseThrow(() -> new DataNotFoundException("존재하지 않는 교수입니다: " + professorName));
 
-        ProfessorEntity professor = professorRepository.findByProfessorName(professorName);
         SubjectEntity subject = new SubjectEntity();
         subject.setSubjectName(subjectName);
         subject.setClassOverview(classOverview);
@@ -54,12 +57,20 @@ public class SubjectService {
         this.subjectRepository.save(subject);
     }
 
+
     public void updateSubject(SubjectEntity s, String subjectName, String classOverview, String classLocation,
                               String classTime, String classNumber, String credits, String classification,
                               Integer totalCapacity, String subjectGrade, String professorName, String department) {
+        ProfessorEntity professor = professorRepository.findFirstByProfessorName(professorName)
+                .orElseThrow(() -> new DataNotFoundException("존재하지 않는 교수입니다: " + professorName));
 
-        ProfessorEntity professor = professorRepository.findByProfessorName(professorName);
-
+        // 과목 번호가 변경되었을 때만 중복 체크
+        if (!s.getClassNumber().equals(classNumber)) {
+            // 새로운 과목 번호가 이미 존재하는지 확인
+            if (subjectRepository.existsByClassNumber(classNumber)) {
+                throw new DataIntegrityViolationException("이미 존재하는 과목 번호입니다.");
+            }
+        }
         s.setSubjectName(subjectName);
         s.setClassOverview(classOverview);
         s.setClassLocation(classLocation);
@@ -68,7 +79,7 @@ public class SubjectService {
         s.setCredits(credits);
         s.setClassification(classification);
         s.setTotalCapacity(totalCapacity);
-        s.setRemainCapacity(totalCapacity); // 초기에는 남은 자리가 전체 수강 정원과 같습니다.
+        s.setRemainCapacity(totalCapacity);
         s.setSubjectGrade(subjectGrade);
         s.setProfessor(professor);
         s.setDepartment(department);
@@ -221,6 +232,13 @@ public class SubjectService {
 
     public SubjectEntity searchClassNumber(String classNumber) {
         return subjectRepository.findByClassNumber(classNumber).orElseThrow(() -> new DataNotFoundException("찾을수없는 과목코드입니다."));
+    }
+
+    @ModelAttribute("professors")
+    public List<ProfessorEntity> getAllProfessors() {
+        return professorRepository.findAll().stream()
+                .sorted(Comparator.comparing(ProfessorEntity::getProfessorName))
+                .collect(Collectors.toList());
     }
 }
 ///public SubjectEntity findByClassNumber(String classNumber) {

@@ -4,146 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>찬형대학교 수강신청</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
-
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-repeat: no-repeat;
-            background-color: #0a192f;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .container {
-            display: flex;
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            width: 1000px;
-        }
-        .notice-section {
-            /*margin-bottom: 20px;*/
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-            font-size: 18px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .notice-title {
-            font-size: 30px;
-            font-weight: bold;
-            padding-top: 50px;
-            margin-bottom: 40px;
-            color: #333;
-        }
-        .notice-content {
-            margin-top: 10px;
-            margin-left: 20px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            line-height: 1.6;
-            color: #444;
-        }
-        .notice-date {
-            font-size: 0.9em;
-            color: #777;
-            margin-top: 10px;
-        }
-        .login-section {
-            flex: 1;
-            padding: 40px;
-            background-color: rgba(255, 255, 255, 0.9);
-        }
-        .logo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .logo img {
-            width: 180px;
-        }
-        h1 {
-            text-align: center;
-            color: #0a192f;
-            font-size: 28px;
-            margin-bottom: 30px;
-            font-weight: 700;
-        }
-        .input-group {
-            margin-bottom: 25px;
-            margin-right: 25px
-        }
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #0a192f;
-            font-weight: 500;
-        }
-        .input-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-        .input-group input:focus {
-            border-color: #d4af37;
-            outline: none;
-        }
-        .submit-btn {
-            width: 100%;
-            padding: 14px;
-            background-color: #d4af37;
-            color: #0a192f;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: 700;
-            transition: background-color 0.3s ease;
-        }
-        .submit-btn:hover {
-            background-color: #c19b2e;
-        }
-        .language-switch {
-            text-align: right;
-            margin-top: 20px;
-        }
-        .language-switch a {
-            color: #d4af37;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-        .language-switch a:hover {
-            color: #c19b2e;
-        }
-        .notice-section h2 {
-            color: #0a192f;
-            font-size: 24px;
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-        .notice-content {
-            color: #172a45;
-            line-height: 1.6;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
 </head>
 <body>
 <div class="container">
     <div th:if="${fixedNotice}" class="notice-section">
         <div class="notice-title" th:text="${fixedNotice.title}">공지사항 제목</div>
         <div class="notice-content" th:text="${fixedNotice.content}">
-            <!-- 공지사항 내용이 여기에 표시됩니다 -->
+
         </div>
-<!--        <div class="notice-date" th:text="${#temporals.format(fixedNotice.createdAt, 'yyyy년 MM월 dd일 HH:mm')}">작성일</div>-->
 
     </div>
     <div class="login-section">
@@ -170,7 +39,7 @@
 
 
         <div class="language-switch">
-            <a href="#">ENGLISH VERSION ›</a>
+            <a href="/adminCheck">ENGLISH VERSION ›</a>
         </div>
     </div>
 </div>

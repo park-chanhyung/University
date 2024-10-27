@@ -1,15 +1,22 @@
 package com.example.chanhyunguniversity.form;
 
 import com.example.chanhyunguniversity.domain.ProfessorEntity;
+import com.example.chanhyunguniversity.repository.ProfessorRepository;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
+@RequiredArgsConstructor
 public class SubjectForm {
+    private final ProfessorRepository professorRepository;
+
     @NotEmpty(message = "과목명은 필수항목입니다.")
     private String subjectName;
 
@@ -48,7 +55,15 @@ public class SubjectForm {
     public String getProfessorName() {
         return professorName;
     }
+    // 교수 존재 여부 확인 메서드 추가
+    public boolean isProfessorExists(String professorName) {
+        return professorRepository.findByProfessorName(professorName) != null;
+    }
 
+    // 모든 교수 목록 조회 메서드 추가
+    public List<ProfessorEntity> getAllProfessors() {
+        return professorRepository.findAll();
+    }
 
     public void setProfessor(ProfessorEntity professor) {
     }
